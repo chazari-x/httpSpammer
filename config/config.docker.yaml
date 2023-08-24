@@ -1,0 +1,32 @@
+statist:
+  address: "0.0.0.0:8083"
+
+worker:
+  time: 10
+  threads: 50
+  urls: [{
+            url: "http://httpspammer-balancer-1:8080/users",
+            method: "GET",
+            id: false,
+            body: true,
+          },{
+            url: "http://httpspammer-balancer-1:8080/users",
+            method: "POST",
+            id: false,
+            body: true,
+          },{
+            url: "http://httpspammer-balancer-1:8080/users",
+            method: "PUT",
+            id: true,
+            body: true,
+          },{
+            url: "http://httpspammer-balancer-1:8080/users",
+            method: "DELETE",
+            id: true,
+            body: true,
+          },{
+            url: "http://httpspammer-balancer-1:8080/users",
+            method: "GET",
+            id: true,
+            body: false,
+          }]
