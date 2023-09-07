@@ -46,7 +46,7 @@ func (c *Controller) Start(num int) {
 		defer c.wg.Done()
 
 		var i = -1
-		var id int
+		username := fmt.Sprintf("user%s%d", time.Now().String(), num)
 
 		for {
 			select {
@@ -66,16 +66,16 @@ func (c *Controller) Start(num int) {
 
 			var url string
 			if c.c.URLs[i].ID {
-				url = fmt.Sprintf("%s/%d", c.c.URLs[i].URL, id)
+				url = fmt.Sprintf("%s/%s", c.c.URLs[i].URL, username)
 			} else {
 				url = c.c.URLs[i].URL
+				username = fmt.Sprintf("user%s%d", time.Now().String(), num)
 			}
 
 			var body io.Reader
 			if c.c.URLs[i].Body {
 				b, err := json.Marshal(User{
-					ID:       id,
-					Username: fmt.Sprintf("user%s%d", time.Now().String(), num),
+					Username: username,
 					Email:    fmt.Sprintf("email%s%d", time.Now().String(), num),
 				})
 				if err != nil {
@@ -112,13 +112,9 @@ func (c *Controller) Start(num int) {
 				var u User
 				err = json.Unmarshal(b, &u)
 				if err != nil {
-					log.Printf(string(b))
+					//log.Printf(string(b))
 					_ = resp.Body.Close()
 					continue
-				}
-
-				if u.ID != 0 {
-					id = u.ID
 				}
 			}
 

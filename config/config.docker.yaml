@@ -8,7 +8,7 @@ worker:
             url: "http://httpspammer-balancer-1:8080/users",
             method: "GET",
             id: false,
-            body: true,
+            body: false,
           },{
             url: "http://httpspammer-balancer-1:8080/users",
             method: "POST",
@@ -23,7 +23,7 @@ worker:
             url: "http://httpspammer-balancer-1:8080/users",
             method: "DELETE",
             id: true,
-            body: true,
+            body: false,
           },{
             url: "http://httpspammer-balancer-1:8080/users",
             method: "GET",

@@ -29,8 +29,6 @@ func NewPrometheus(cfg *Config) Statist {
 
 	reg.MustRegister(responseTime)
 
-	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
-
 	go func(reg *prometheus.Registry) {
 		http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 		log.Fatal(http.ListenAndServe(cfg.Address, nil))
