@@ -2,6 +2,7 @@ statist:
   address: "0.0.0.0:8083"
 
 worker:
+  type: balancer
   time: 1
   threads: 50
   urls: [{

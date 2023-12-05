@@ -6,15 +6,15 @@ worker:
   time: 1
   threads: 50
   urls: [{
-    url: "http://httpspammer-server-1:8080/analytics",
-    method: "POST",
-    id: false,
-    body: true,
-    b: '{
+            url: "http://localhost:8080/analytics",
+            method: "POST",
+            id: false,
+            body: true,
+            b: '{
               "module" : "settings",
               "type" : "alert",
               "event" : "click",
               "name" : "подтверждение выхода",
               "data" : {"action" : "cancel"}
             }'
-  }]
+          }]

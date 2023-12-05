@@ -23,10 +23,12 @@ type Config struct {
 	Time    int `yaml:"time"`
 	Threads int `yaml:"threads"`
 	URLs    []struct {
+		Type   string `yaml:"type"`
 		URL    string `yaml:"url"`
 		Method string `yaml:"method"`
 		ID     bool   `yaml:"id"`
 		Body   bool   `yaml:"body"`
+		B      string `yaml:"b"`
 	} `yaml:"urls"`
 }
 
@@ -65,24 +67,37 @@ func (c *Controller) Start(num int) {
 			client := http.Client{}
 
 			var url string
-			if c.c.URLs[i].ID {
-				url = fmt.Sprintf("%s/%s", c.c.URLs[i].URL, username)
-			} else {
-				url = c.c.URLs[i].URL
-				username = fmt.Sprintf("user%s%d", time.Now().String(), num)
-			}
-
 			var body io.Reader
-			if c.c.URLs[i].Body {
-				b, err := json.Marshal(User{
-					Username: username,
-					Email:    fmt.Sprintf("email%s%d", time.Now().String(), num),
-				})
-				if err != nil {
-					log.Printf("json marshal err: %s", err.Error())
-					continue
+			if c.c.URLs[i].Type == "audit" {
+				url = c.c.URLs[i].URL
+
+				if c.c.URLs[i].Body {
+					b, err := json.Marshal(c.c.URLs[i].B)
+					if err != nil {
+						log.Printf("json marshal err: %s", err.Error())
+						continue
+					}
+					body = io.NopCloser(bytes.NewBuffer(b))
 				}
-				body = io.NopCloser(bytes.NewBuffer(b))
+			} else {
+				if c.c.URLs[i].ID {
+					url = fmt.Sprintf("%s/%s", c.c.URLs[i].URL, username)
+				} else {
+					url = c.c.URLs[i].URL
+					username = fmt.Sprintf("user%s%d", time.Now().String(), num)
+				}
+
+				if c.c.URLs[i].Body {
+					b, err := json.Marshal(User{
+						Username: username,
+						Email:    fmt.Sprintf("email%s%d", time.Now().String(), num),
+					})
+					if err != nil {
+						log.Printf("json marshal err: %s", err.Error())
+						continue
+					}
+					body = io.NopCloser(bytes.NewBuffer(b))
+				}
 			}
 
 			req, err := http.NewRequest(c.c.URLs[i].Method, url, body)

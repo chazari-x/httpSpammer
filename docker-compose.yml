@@ -1,21 +1,30 @@
 version: '3'
 
 services:
+#  postgres:
+#    image: "postgres:latest"
+#    environment:
+#      POSTGRES_DB: "balancer_postgres"
+#      POSTGRES_USER: "postgres"
+#      POSTGRES_PASSWORD: "postgrespw"
+#    ports:
+#      - "5432:5432"
+
   postgres:
     image: "postgres:latest"
     environment:
-      POSTGRES_DB: "balancer_postgres"
+      POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgrespw"
     ports:
       - "5432:5432"
 
-  redis:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass qwe098poi123
+#  redis:
+#    image: redis:6.2-alpine
+#    restart: always
+#    ports:
+#      - '6379:6379'
+#    command: redis-server --save 20 1 --loglevel warning --requirepass qwe098poi123
 
   prometheus:
     image: prom/prometheus:latest
@@ -32,40 +41,50 @@ services:
       - '3000:3000'
     depends_on:
       - prometheus
+#
+#  balancer:
+#    image: "chazari/service_balancer:latest"
+#    restart: on-failure
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - postgres
+#      - redis
+#      - storage
+#    command: [ "/app/main", "balancer" ]
+#
+#  api:
+#    image: "chazari/service_balancer:latest"
+#    restart: on-failure
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      - postgres
+#    command: [ "/app/main", "api" ]
+#
+#  storage:
+#    image: "chazari/users_storage:latest"
+#    ports:
+#      - "8084:8084"
+#    depends_on:
+#      - postgres
+#    command: [ "/app/main", "storage" ]
 
-  balancer:
-    image: "chazari/service_balancer:latest"
+  server:
+    image: "chazari/audit:latest"
     restart: on-failure
     ports:
       - "8080:8080"
     depends_on:
       - postgres
-      - redis
-      - storage
-    command: [ "/app/main", "balancer" ]
-
-  api:
-    image: "chazari/service_balancer:latest"
-    restart: on-failure
-    ports:
-      - "8081:8081"
-    depends_on:
-      - postgres
-    command: [ "/app/main", "api" ]
-
-  storage:
-    image: "chazari/users_storage:latest"
-    ports:
-      - "8084:8084"
-    depends_on:
-      - postgres
-    command: [ "/app/main", "storage" ]
+    command: ["/app/main", "server" ]
 
   spammer:
     image: "chazari/http_spammer:latest"
     depends_on:
-      - balancer
-      - storage
+#      - balancer
+#      - storage
+      - server
       - prometheus
     ports:
       - "8083:8083"

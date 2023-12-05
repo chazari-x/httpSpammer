@@ -10,15 +10,14 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(&cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "worker",
 		Short: "Worker",
 		Long:  "Worker",
 		Run: func(cmd *cobra.Command, args []string) {
 			log.Println("starting..")
 
-			ctx := cmd.Context()
-			cfg := configFromContext(ctx)
+			cfg := getConfig(cmd)
 
 			wg := sync.WaitGroup{}
 
@@ -39,5 +38,7 @@ func init() {
 
 			wg.Wait()
 		},
-	})
+	}
+	rootCmd.AddCommand(cmd)
+	cmd.PersistentFlags().String("config", "config.yaml", "config.yaml")
 }
